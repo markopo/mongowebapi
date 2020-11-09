@@ -26,11 +26,11 @@ namespace MongoWebApi
             var config = new ServerConfig();
             Configuration.Bind(config);
             
-            var todoContext = new TodoContext(config.MongoDb);
-            var repo = new TodoRepository(todoContext);
-            services.AddSingleton<ITodoRepository>(repo);
-            
-            
+            var context = new DatabaseContext(config.MongoDb);
+
+            services.AddSingleton<ITodoRepository>(new TodoRepository(context));
+
+            services.AddSingleton<IUserRepository>(new UserRepository(context));            
             
             services.AddSwaggerGen(c =>
             {
