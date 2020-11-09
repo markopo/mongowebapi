@@ -22,6 +22,17 @@ namespace MongoWebApi.Repositories
             user.IsActive = true;
             await _context.Users.InsertOneAsync(user);
         }
-        
+
+        public async Task<User> GetUser(string userName)
+        {
+            var filter = Builders<User>.Filter.Eq(m => m.UserName, userName);
+            return await _context.Users.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> Authenticate(User user)
+        {
+            var foundUser = await GetUser(user.UserName);
+            return foundUser != null && BCrypt.Net.BCrypt.Verify(foundUser.Password, user.Password);
+        }
     }
 }
