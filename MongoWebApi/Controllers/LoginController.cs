@@ -3,6 +3,7 @@ using MongoWebApi.Models;
 using MongoWebApi.Repositories;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MongoWebApi.Models.Dto;
 
 namespace MongoWebApi.Controllers
 {
@@ -17,20 +18,40 @@ namespace MongoWebApi.Controllers
             _repository = repository;
         }
 
+        [Route("Register")]
         [HttpPost]
-        public async Task<ActionResult<User>> Register([FromBody] User user)
+        public async Task<ActionResult<UserRegister>> Register([FromBody] UserRegister userRegister)
         {
             try
             {
-                user.Id = await _repository.GetNextId();
+                var user = new User
+                {
+                    UserName = userRegister.UserName,
+                    Password = userRegister.Password,
+                    Id = await _repository.GetNextId()
+                };
+                
                 await _repository.CreateUser(user);
-                return new OkObjectResult(user);
+                
+                return new OkObjectResult(new
+                {
+                    Message = "User Created",
+                    user.UserName
+                });
             }
             catch(Exception exception)
             {
                 // TODO: Log this.
-                var message = exception.Message;
-                return new BadRequestObjectResult("Could not Register!");
+                var message = "Could not Register! ";
+
+                // A write operation resulted in an error.
+                // E11000 duplicate key error collection
+                if (exception.Message.Contains("duplicate key error"))
+                {
+                    message += "User already exists!";
+                }
+
+                return new BadRequestObjectResult(message);
             }
         }
     }
