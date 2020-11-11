@@ -37,10 +37,12 @@ namespace MongoWebApi.Repositories
             return await _context.Users.Find(filter).ToListAsync();
         }
 
-        public async Task<bool> Authenticate(User user)
+        public async Task<Tuple<string, bool>> Authenticate(string userName, string passWord)
         {
-            var foundUser = await GetUser(user.UserName);
-            return foundUser != null && BCrypt.Net.BCrypt.Verify(foundUser.Password, user.Password);
+            var foundUser = await GetUser(userName);
+            var hasUser = foundUser != null;
+            var isLoggedIn = hasUser && BCrypt.Net.BCrypt.Verify(passWord, foundUser.Password);
+            return new Tuple<string, bool>(hasUser ? foundUser.UserName : "", isLoggedIn);
         }
 
         public async Task<long> GetNextId()

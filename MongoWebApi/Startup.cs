@@ -1,3 +1,4 @@
+using JwtAuthentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -30,7 +31,9 @@ namespace MongoWebApi
 
             services.AddSingleton<ITodoRepository>(new TodoRepository(context));
 
-            services.AddSingleton<IUserRepository>(new UserRepository(context));            
+            services.AddSingleton<IUserRepository>(new UserRepository(context));
+
+            services.AddSingleton<IJwtTokenHandler>(new JwtTokenHandler());
             
             services.AddSwaggerGen(c =>
             {

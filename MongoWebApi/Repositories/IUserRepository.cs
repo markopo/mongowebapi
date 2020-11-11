@@ -14,7 +14,7 @@ namespace MongoWebApi.Repositories
 
         Task<IEnumerable<User>> GetUsers(bool isActive);
 
-        Task<bool> Authenticate(User user);
+        Task<Tuple<string, bool>> Authenticate(string userName, string passWord);
         
         Task<long> GetNextId();
     }
