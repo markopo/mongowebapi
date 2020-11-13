@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using System.Threading.Tasks;
 using JwtAuthentication;
@@ -11,7 +10,6 @@ using Microsoft.OpenApi.Models;
 using MongoWebApi.Config;
 using MongoWebApi.Models;
 using MongoWebApi.Repositories;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors.Infrastructure;

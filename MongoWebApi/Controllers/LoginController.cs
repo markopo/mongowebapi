@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using JwtAuthentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using MongoWebApi.Config;
 using MongoWebApi.Models.Dto;
 
 namespace MongoWebApi.Controllers
