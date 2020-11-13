@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using MongoWebApi.Models.Dto;
 
 namespace MongoWebApi.Controllers
@@ -14,7 +15,7 @@ namespace MongoWebApi.Controllers
     public class UserController : Controller
     {
         private readonly IUserRepository _repository;
-        
+
         public UserController(IUserRepository repository)
         {
             _repository = repository;

@@ -31,6 +31,12 @@ namespace MongoWebApi.Repositories
             return await _context.Users.Find(filter).FirstOrDefaultAsync();
         }
 
+        public async Task<User> GetUser(int userId)
+        {
+            var filter = Builders<User>.Filter.Eq(m => m.Id, userId);
+            return await _context.Users.Find(filter).FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<User>> GetUsers(bool isActive)
         {
             var filter = Builders<User>.Filter.Eq(m => m.IsActive, isActive);

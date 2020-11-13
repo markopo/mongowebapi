@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using JwtAuthentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using MongoWebApi.Config;
 using MongoWebApi.Models.Dto;
 
 namespace MongoWebApi.Controllers
@@ -16,6 +18,7 @@ namespace MongoWebApi.Controllers
     {
         private readonly IUserRepository _repository;
         private readonly IJwtTokenHandler _jwtTokenHandler;
+        
 
         public LoginController(IUserRepository repository, IJwtTokenHandler jwtTokenHandler)
         {

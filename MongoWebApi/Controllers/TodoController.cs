@@ -2,12 +2,13 @@ using MongoWebApi.Models;
 using MongoWebApi.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MongoWebApi.Controllers
 {
   
-    
+    [Authorize("Bearer")]
     [Produces("application/json")]
     [Route("api/[Controller]")]
     public class TodoController : Controller

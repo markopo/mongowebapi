@@ -5,27 +5,34 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace JwtAuthentication
 {
     public class JwtTokenHandler : IJwtTokenHandler
     {
-        private readonly DateTime _expires = DateTime.UtcNow.AddDays(1);
+        private readonly DateTime _expires = DateTime.UtcNow.AddDays(2);
+        private readonly string _jwtSecret;
+        
+        public JwtTokenHandler(string jwtSecret)
+        {
+            _jwtSecret = jwtSecret;
+        }
 
         public async Task<string> GetToken(string userId)
         {
            var jwtToken = await Task.Run<string>(() =>
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = new RsaSecurityKey(RSA.Create(2048));
+                var key = Encoding.ASCII.GetBytes(_jwtSecret);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
+                    Subject = new ClaimsIdentity(new []
                     {
                         new Claim(ClaimTypes.Name, userId)
                     }),
                     Expires = _expires,
-                    SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature)
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 return tokenHandler.WriteToken(token);

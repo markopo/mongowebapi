@@ -8,6 +8,8 @@ namespace MongoWebApi.Config
         public string User { get; set; }
         public string Password { get; set; }
         
+        public string JwtSecret { get; set; }
+        
         public string ConnectionString 
         {
             get 
