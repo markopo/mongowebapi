@@ -162,7 +162,6 @@ namespace MongoWebApi.Tests.Controllers
             
         }
         
-        
         [Fact]
         public async Task TestPutFailureTwo()
         {
@@ -182,6 +181,67 @@ namespace MongoWebApi.Tests.Controllers
             
             Assert.Equal(typeof(NotFoundResult), result.Result.GetType());
             
+        }
+
+        [Fact]
+        public async Task TestDeleteSuccess()
+        {
+            var todo = BogusTodo.Create();
+            
+            var mockRepo = new Mock<ITodoRepository>();
+
+            mockRepo.Setup(x => x.GetTodo(todo.Id))
+                .ReturnsAsync(todo);
+
+            mockRepo.Setup(x => x.Delete(todo.Id))
+                .ReturnsAsync(true);
+            
+            var controller = new TodoController(mockRepo.Object);
+
+            var result = await controller.Delete(todo.Id);
+            
+            Assert.NotNull(result);
+            Assert.Equal(typeof(OkResult), result.GetType());
+        }
+        
+        [Fact]
+        public async Task TestDeleteFailureOne()
+        {
+            var mockRepo = new Mock<ITodoRepository>();
+
+            mockRepo.Setup(x => x.GetTodo(18888))
+                .Returns(Task.FromResult<Todo>(null));
+
+            mockRepo.Setup(x => x.Delete(18888))
+                .ReturnsAsync(true);
+            
+            var controller = new TodoController(mockRepo.Object);
+
+            var result = await controller.Delete(18888);
+            
+            Assert.NotNull(result);
+            Assert.Equal(typeof(NotFoundResult), result.GetType());
+        }
+        
+        [Fact]
+        public async Task TestDeleteFailureTwo()
+        {
+            var todo = BogusTodo.Create();
+            
+            var mockRepo = new Mock<ITodoRepository>();
+
+            mockRepo.Setup(x => x.GetTodo(18888))
+                .ReturnsAsync(todo);
+
+            mockRepo.Setup(x => x.Delete(18888))
+                .ReturnsAsync(false);
+            
+            var controller = new TodoController(mockRepo.Object);
+
+            var result = await controller.Delete(18888);
+            
+            Assert.NotNull(result);
+            Assert.Equal(typeof(NotFoundResult), result.GetType());
         }
         
     }
