@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MongoWebApi.Controllers;
@@ -7,6 +7,8 @@ using MongoWebApi.Models;
 using MongoWebApi.Repositories;
 using Moq;
 using Xunit;
+using Bogus;
+using MongoWebApi.Tests.TestData;
 
 namespace MongoWebApi.Tests.Controllers
 {
@@ -16,22 +18,17 @@ namespace MongoWebApi.Tests.Controllers
         [Fact]
         public async Task TestGetSuccess()
         {
-            var todo = new Todo
-            {
-                Id = 11,
-                Content = "random string",
-                Title = "random title"
-            };
+            var todo = BogusTodo.Create();
             
             var mockRepo = new Mock<ITodoRepository>();
             
             mockRepo
-                .Setup(x => x.GetTodo(11))
+                .Setup(x => x.GetTodo(todo.Id))
                 .ReturnsAsync(todo);
             
             var controller = new TodoController(mockRepo.Object);
 
-            var result = await controller.Get(11);
+            var result = await controller.Get(todo.Id);
 
             Assert.NotNull(result);
 
@@ -67,24 +64,9 @@ namespace MongoWebApi.Tests.Controllers
                 .Setup(x => x.GetAllTodos())
                 .ReturnsAsync(new List<Todo>
                 {
-                    new Todo
-                    {
-                        Id = 11,
-                        Content = "random string",
-                        Title = "random title"
-                    },
-                    new Todo
-                    {
-                        Id = 12,
-                        Content = "random string 2",
-                        Title = "random title 2"
-                    },
-                    new Todo
-                    {
-                        Id = 13,
-                        Content = "random string 3",
-                        Title = "random title 3"
-                    }
+                    BogusTodo.Create(),
+                    BogusTodo.Create(),
+                    BogusTodo.Create()
                 });
             
             var controller = new TodoController(mockRepo.Object);
@@ -99,6 +81,25 @@ namespace MongoWebApi.Tests.Controllers
             Assert.Equal(3, listResult.Count);
             
             
+        }
+
+        [Fact]
+        public async Task TestPostSuccess()
+        {
+            var todo = BogusTodo.Create();
+            
+            var mockRepo = new Mock<ITodoRepository>();
+            
+            mockRepo.Setup(x => x.Create(todo))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            var controller = new TodoController(mockRepo.Object);
+
+            var result = await controller.Post(todo);
+            
+            Assert.NotNull(result);
+            Assert.Equal(typeof(OkObjectResult), result.Result.GetType());
         }
     }
 }
