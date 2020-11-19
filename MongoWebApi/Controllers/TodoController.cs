@@ -61,7 +61,12 @@ namespace MongoWebApi.Controllers
             todo.Id = todoFromDb.Id;
             todo.InternalId = todoFromDb.InternalId;
 
-            await _repository.Update(todo);
+            var ok = await _repository.Update(todo);
+
+            if (!ok)
+            {
+                return new NotFoundResult();
+            }
             
             return new OkObjectResult(todo);
         }

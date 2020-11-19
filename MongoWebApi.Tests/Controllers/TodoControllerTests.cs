@@ -89,6 +89,9 @@ namespace MongoWebApi.Tests.Controllers
             var todo = BogusTodo.Create();
             
             var mockRepo = new Mock<ITodoRepository>();
+
+            mockRepo.Setup(x => x.GetNextId())
+                .ReturnsAsync(todo.Id);
             
             mockRepo.Setup(x => x.Create(todo))
                 .Returns(Task.CompletedTask)
@@ -100,6 +103,86 @@ namespace MongoWebApi.Tests.Controllers
             
             Assert.NotNull(result);
             Assert.Equal(typeof(OkObjectResult), result.Result.GetType());
+            
+            var res = result.Result as OkObjectResult;
+            
+            Assert.Equal(typeof(Todo), res.Value.GetType());
+
+            var postTodo = res.Value as Todo;
+            
+            Assert.NotNull(postTodo);
+            
+            Assert.Equal(todo.Id, postTodo.Id);
         }
+
+        [Fact]
+        public async Task TestPutSuccess()
+        {
+            var todo = BogusTodo.Create();
+            
+            var mockRepo = new Mock<ITodoRepository>();
+
+            mockRepo.Setup(x => x.GetTodo(todo.Id))
+                .ReturnsAsync(todo);
+
+            mockRepo.Setup(x => x.Update(todo))
+                .ReturnsAsync(true);
+
+            var controller = new TodoController(mockRepo.Object);
+
+            var result = await controller.Put(todo.Id, todo);
+            
+            var res = result.Result as OkObjectResult;
+            
+            Assert.Equal(typeof(Todo), res.Value.GetType());
+
+            var putTodo = res.Value as Todo;
+            
+            Assert.Equal(todo.Id, putTodo.Id);
+        }
+        
+        [Fact]
+        public async Task TestPutFailureOne()
+        {
+            var todo = BogusTodo.Create();
+            
+            var mockRepo = new Mock<ITodoRepository>();
+
+            mockRepo.Setup(x => x.GetTodo(todo.Id))
+                .Returns( Task.FromResult<Todo>(null));
+
+            mockRepo.Setup(x => x.Update(todo))
+                .ReturnsAsync(true);
+
+            var controller = new TodoController(mockRepo.Object);
+
+            var result = await controller.Put(todo.Id, todo);
+            
+            Assert.Equal(typeof(NotFoundResult), result.Result.GetType());
+            
+        }
+        
+        
+        [Fact]
+        public async Task TestPutFailureTwo()
+        {
+            var todo = BogusTodo.Create();
+            
+            var mockRepo = new Mock<ITodoRepository>();
+
+            mockRepo.Setup(x => x.GetTodo(todo.Id))
+                .ReturnsAsync(todo);
+
+            mockRepo.Setup(x => x.Update(todo))
+                .ReturnsAsync(false);
+
+            var controller = new TodoController(mockRepo.Object);
+
+            var result = await controller.Put(todo.Id, todo);
+            
+            Assert.Equal(typeof(NotFoundResult), result.Result.GetType());
+            
+        }
+        
     }
 }
