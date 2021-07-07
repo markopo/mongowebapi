@@ -81,12 +81,12 @@ namespace MongoWebApi.Controllers
                 return new NotFoundResult();
             }
 
-           var ok = await _repository.Delete(id);
+            var ok = await _repository.Delete(id);
            
-           if (!ok)
-           {
-               return new NotFoundResult();
-           }
+            if (!ok)
+            {
+                return new NotFoundResult();
+            }
             
             return new OkResult();
         }

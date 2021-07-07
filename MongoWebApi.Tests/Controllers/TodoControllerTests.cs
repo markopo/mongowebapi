@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +6,6 @@ using MongoWebApi.Models;
 using MongoWebApi.Repositories;
 using Moq;
 using Xunit;
-using Bogus;
 using MongoWebApi.Tests.TestData;
 
 namespace MongoWebApi.Tests.Controllers
